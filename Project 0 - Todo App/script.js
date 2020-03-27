@@ -15,10 +15,15 @@ let uniqueIdNum = 1;
 function newTodo() {
   const todoDescrip = prompt("What do you need to do?");
 
-  const newTodo = new Todo(todoDescrip);
-  addTodo(newTodo);
+  if (verifyUnique(todoDescrip)) {
+    const newTodo = new Todo(todoDescrip);
+    addTodo(newTodo);
+  } else {
+    alert("That todo already exists.");
+  }
 }
 
+// Factory function for todo objects
 function Todo(description) {
   return {
     id: uniqueIdNum,
@@ -84,6 +89,21 @@ function removeTodo(todo) {
   currentTodo.remove();
 }
 
+function verifyUnique(todoText) {
+  const childTodos = list.getElementsByClassName(classNames.TODO_ITEM);
+
+  for (const todo of childTodos) {
+    // Truncate the "Delete Todo" text fron the text content
+    const curTodoDescrip = todo.textContent.split("D")[0];
+
+    if (todoText === curTodoDescrip) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function makeTodoCheckBox(id) {
   // Create the checkbox and give it its corresponding class
   let checkBox = document.createElement("input");
@@ -94,12 +114,12 @@ function makeTodoCheckBox(id) {
   checkBox.id = "checkbox" + id;
 
   // Add event handler for whenever the checkbox is checked/unchecked
-  checkBox.addEventListener("change", function() {
+  checkBox.addEventListener("change", function () {
     // Increment or decrement the value in uncheckedCountSpan depending on
     // the current state of the checkbox
-    this.checked
-      ? decrementCounter(uncheckedCountSpan)
-      : incrementCounter(uncheckedCountSpan);
+    this.checked ?
+      decrementCounter(uncheckedCountSpan) :
+      incrementCounter(uncheckedCountSpan);
   });
 
   return checkBox;
@@ -113,7 +133,7 @@ function makeDeleteButton(id) {
   deleteButton.textContent = "Delete Todo";
 
   // Add event handler to delete the button's corresponding todo
-  deleteButton.addEventListener("click", function() {
+  deleteButton.addEventListener("click", function () {
     const parentTodo = this.parentElement;
 
     removeTodo(parentTodo);
